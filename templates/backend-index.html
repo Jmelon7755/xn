@@ -1,0 +1,74 @@
+{{extends file="master.html"}}
+
+{{block name="stylesheet"}}
+<link rel="stylesheet" href="http://localhost/xn/css/backend-index.css">
+{{/block}}
+
+{{block name="title"}}
+XN-Backend
+{{/block}}
+
+{{block name="body"}}
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="">XN後台</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a target="_blank" rel="noopener noreferrer" href="http://localhost/xn/client">小農首頁</a></li>
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown">{{$user_name}}<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a id="logout-a" href="">登出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-2 sidenav">
+            <ul class="nav nav-pills nav-stacked">
+                <li><a id="member_manager" href="http://localhost/xn/backend/member-manager">
+                        <span>會員管理</span>
+                        <span class="pull-right">></span>
+                    </a></li>
+                <li><a id="product_manager" href="http://localhost/xn/backend/product-manager">
+                        <span>產品管理</span>
+                        <span class="pull-right">></span>
+                    </a></li>
+                <li><a id="transaction_manager" href="http://localhost/xn/backend/transaction-manager">
+                        <span>交易管理</span>
+                        <span class="pull-right">></span>
+                    </a></li>
+            </ul><br>
+        </div>
+        <div class="col-xs-10">
+            <div class="container-fluid">
+                <h3 id="sub_title">{{block name="sub-title"}}{{/block}}</h3>
+                <br />
+                <div id="tab_panel">
+                    {{block name="tab-panel"}}
+                    {{/block}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/block}}
+
+{{block name="script" append}}
+<script src="http://localhost/xn/js/backend-index.js" defer></script>
+{{/block}}

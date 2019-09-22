@@ -1,0 +1,83 @@
+{{extends file="backend-index.html"}}
+
+{{block name="sub-title"}}
+會員管理
+{{/block}}
+
+{{block name="tab-panel"}}
+<div class="row">
+    <div class="col-xs-12">
+        <button id="all-freeze-btn" type="button" class="btn btn-danger" style="display:none">
+            <span class="glyphicon glyphicon-trash"></span> 批量凍結
+        </button>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-bordered table-text-center">
+            <thead>
+                <tr>
+                    <th class="checkbox-col" style="display: none">
+                        <div id="all-select-div" class="checkbox" style="display:none">
+                            <label><input id="all-select-checkbox" type="checkbox">全選</label>
+                        </div>
+                    </th>
+                    <th>編號</th>
+                    <th>用戶名</th>
+                    <th>帳號</th>
+                    <th>加入時間</th>
+                    <th>權限</th>
+                    <th>狀態</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{foreach $users as $user}}
+                <tr id="{{$user->id}}">
+                    <th class="checkbox-col" style="display: none">
+                        {{if !$user->administrator && !$user->freeze}}
+                        <input class="row-select-checkbox" type="checkbox">
+                        {{/if}}
+                    </th>
+                    <td>{{$user->id}}</td>
+                    <td>{{$user->name}}</td>
+                    <td>{{$user->account}}</td>
+                    <td>{{$user->create_time}}</td>
+                    <td>
+                        {{if $user->administrator}}
+                        管理員
+                        {{else}}
+                        一般會員
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{if $user->freeze}}
+                        已凍結
+                        {{else}}
+                        已開啟
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{if !$user->administrator}}
+                        {{if !$user->freeze}}
+                        <a class="upgrade-admin-a" href=""><span class="glyphicon glyphicon-user"></span></a>
+                        {{/if}}
+                        {{if $user->freeze}}
+                        <a class="unlock-a" href=""><span class="glyphicon glyphicon-refresh"></span></a>
+                        {{else}}
+                        <a class="lock-a" href=""><span class="glyphicon glyphicon glyphicon-lock"></span></a>
+                        {{/if}}
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/foreach}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{/block}}
+
+{{block name="script" prepend}}
+<script src="http://localhost/xn/js/member-manager.js"></script>
+{{/block}}

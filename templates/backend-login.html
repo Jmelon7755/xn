@@ -1,0 +1,35 @@
+{{extends file="master.html"}}
+
+{{block name="title"}}
+XN-Backend-login
+{{/block}}
+
+{{block name="body"}}
+<div class="container">
+    <h3>後台管理員登入</h3>
+    <br />
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form role="form">
+                <legend>登入</legend>
+                <div class="form-group">
+                    <label for="account">帳號</label>
+                    <input type="text" id="account" class="form-control" placeholder="管理員帳號">
+                    <p id="account-warning" class="text-warning"></p>
+                    <br />
+                    <label for="password">密碼</label>
+                    <input type="password" id="password" class="form-control" placeholder="設定密碼">
+                    <p id="password-warning" class="text-warning"></p>
+                </div>
+                <br />
+                <p id="login-failed" class="text-danger"></p>
+                <button type="submit" class="btn btn-primary pull-right">登入</button>
+            </form>
+        </div>
+    </div>
+</div>
+{{/block}}
+
+{{block name="script"}}
+<script src="http://localhost/xn/js/backend-login.js" defer></script>
+{{/block}}

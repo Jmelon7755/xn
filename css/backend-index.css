@@ -1,0 +1,24 @@
+body{
+    background: #f1f1f1;
+}
+
+.navbar{
+    margin-bottom: 0;
+}
+
+.sidenav{
+    background-color: #EEEEEE;
+}
+
+.content{
+    background-color: white;
+    margin-top: 1%;
+}
+
+.table>thead>tr>th, td{
+    vertical-align: middle;
+}
+
+.pagination{
+    margin: auto;
+}

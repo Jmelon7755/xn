@@ -1,0 +1,53 @@
+{{extends file="backend-index.html"}}
+
+{{block name="sub-title"}}
+產品管理
+{{/block}}
+
+{{block name="tab-panel"}}
+<div class="row">
+    <div class="col-xs-12">
+        <button id="add-btn" type="button" class="btn btn-success">
+            <span class="glyphicon glyphicon-plus"></span> 新增產品
+        </button>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-bordered table-text-center">
+            <thead>
+                <tr>
+                    <th>編號</th>
+                    <th>圖片</th>
+                    <th>名稱</th>
+                    <th>庫存(箱)</th>
+                    <th>價錢</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{foreach $products as $product}}
+                <tr id="{{$product->id}}">
+                    <td>{{$product->id}}</td>
+                    <td>圖片</td>
+                    <td>{{$product->name}}</td>
+                    <td>{{$product->count}}</td>
+                    <td>{{$product->price}}</td>
+                    <td>{{$product->comment}}</td>
+                    <td>
+                        <a href=""><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a href=""><span class="glyphicon glyphicon-trash"></span></a>
+                    </td>
+                </tr>
+                {{/foreach}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{/block}}
+
+{{block name="script" append}}
+<script src="http://localhost/xn/js/product-manager.js" defer></script>
+{{/block}}
