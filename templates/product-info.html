@@ -1,0 +1,31 @@
+{{extends file="master.html"}}
+
+{{block name="stylesheet"}}
+
+{{/block}}
+
+{{block name="title"}}
+Product Info
+{{/block}}
+
+{{block name="body"}}
+<div class="container">
+    <row>
+        <div class="col-xs-5">
+            <img src="
+            {{if $product->img}}
+            {{$product->img}}
+            {{else}}
+            http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg
+            {{/if}}
+            " class="img-responsive">
+        </div>
+        <div class="col-xs-7">
+            <h3 class="text-danger">{{$product->name}}</h3>
+            <p class="text-danger">售價: {{$product->price}}</p>
+        </div>
+    </row>
+</div>
+{{block name="script" prepend}}
+{{/block}}
+{{/block}}
