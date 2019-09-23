@@ -45,8 +45,14 @@ class SmartyController extends Controller
             return;
         }
 
+        $sql_tool = $this->sql_tool;
+
+        $DEFAULT_DATETIME = DEFAULT_DATETIME;
+        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `delete_time` = '$DEFAULT_DATETIME';");
+        $products = $sql_tool->fetchObjectAll("Product");
+
         $this->smarty->assign("user_name", $this->user_controller->user->name);
-        $this->smarty->assign("products", []);
+        $this->smarty->assign("products", $products);
         $this->smarty->display("product-manager.html");
     }
 

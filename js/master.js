@@ -29,6 +29,12 @@ function confirmModal(title, text, ok_name, onOK) {
     $('#modal').modal().show();
 }
 
+function jqGet(url, data, callBack) {
+    $.get(url, data, callBack).fail(function () {
+        alert("get fail");
+    });
+}
+
 function jqPost(url, data, callBack) {
     $.post(url, data, callBack).fail(function () {
         alert("post fail");

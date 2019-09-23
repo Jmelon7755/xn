@@ -31,14 +31,20 @@
                 {{foreach $products as $product}}
                 <tr id="{{$product->id}}">
                     <td>{{$product->id}}</td>
-                    <td>圖片</td>
-                    <td>{{$product->name}}</td>
-                    <td>{{$product->count}}</td>
-                    <td>{{$product->price}}</td>
-                    <td>{{$product->comment}}</td>
+                    <td><img id="{{$product->id}}-img" src=
+                        {{if $product->img}}
+                        "{{$product->img}}"
+                        {{else}}
+                        "http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg"
+                        {{/if}}
+                    width="100" height="100"></td>
+                    <td id="{{$product->id}}-name">{{$product->name}}</td>
+                    <td id="{{$product->id}}-count">{{$product->count}}</td>
+                    <td id="{{$product->id}}-price">{{$product->price}}</td>
+                    <td id="{{$product->id}}-comment">{{$product->comment}}</td>
                     <td>
-                        <a href=""><span class="glyphicon glyphicon-pencil"></span></a>
-                        <a href=""><span class="glyphicon glyphicon-trash"></span></a>
+                        <a class="edit-btn" href=""><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a class="delete-btn" href=""><span class="glyphicon glyphicon-trash"></span></a>
                     </td>
                 </tr>
                 {{/foreach}}

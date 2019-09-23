@@ -1,6 +1,3 @@
-// $(".edit-po-btn").on("click", editPo);
-// $(".delete-po-btn").on("click", deletePo);
-
 $(".navbar-brand").click(function () {
     event.preventDefault();
     window.location.replace("http://localhost/xn/client");
@@ -159,6 +156,16 @@ function logout(event) {
     });
 }
 
-$("#register-a").click(registerModal);
-$("#user-login-a").click(loginModal);
-$("#user-logout-a").click(logout);
+jqReplaceClick($("#register-a"), registerModal);
+jqReplaceClick($("#user-login-a"), loginModal);
+jqReplaceClick($("#user-logout-a"), logout);
+
+jqReplaceClick($(".product-img-a"), productUnitOnClick);
+
+function productUnitOnClick() {
+    alert("TT");
+
+    // jqGet(
+
+    // );
+}

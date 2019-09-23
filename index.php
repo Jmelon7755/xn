@@ -1,5 +1,7 @@
 <?php
 
+define("DEFAULT_DATETIME", "0001-01-01 00:00:00");
+
 function getUserController($sql_tool, $sessionKey)
 {
     $user_id = isset($_SESSION["$sessionKey"]) ? $_SESSION["$sessionKey"] : 0;
@@ -22,7 +24,7 @@ require_once("model/Model.php");
 require_once("model/User.php");
 require_once("controller/Controller.php");
 require_once("controller/UserController.php");
-require_once('/opt/lampp/htdocs/libs/smarty-3.1.33/libs/Smarty.class.php');
+require_once('../libs/smarty-3.1.33/libs/Smarty.class.php');
 require_once("SQLTool.php");
 
 const HOST = "127.0.0.1";
@@ -50,6 +52,7 @@ if (preg_match("/^backend/", $URL)) {
             $smartyController->memberManager();
             exit();
         case "backend/product-manager":
+            require_once("model/Product.php");
             $smartyController = getSmartyController($sql_tool, $user_controller, $smarty);
             $smartyController->productManager();
             exit();
@@ -85,18 +88,26 @@ if (preg_match("/^backend/", $URL)) {
             $exit_s = (string) $user_controller->setFreezeUser($_POST["user-id"], $_POST["freeze"]);
             break;
         case "backend/create-product":
-            if (!isset($_POST["name"]) || !isset($_POST["count"]) || !isset($_POST["price"]) || !isset($_POST["img"]) || !isset($_POST["comment"])) {
+            if (!isset($_POST["data"])) {
                 break;
             }
 
-            $exit_s = (string) getProductController($sql_tool, $user_controller)->create(
-                $_POST["name"],
-                $_POST["count"],
-                $_POST["price"],
-                $_POST["img"],
-                $_POST["comment"]
-            );
-        break;
+            $exit_s = getProductController($sql_tool, $user_controller)->create($_POST["data"]);
+            break;
+        case "backend/update-product":
+            if (!isset($_POST["id"]) || !isset($_POST["data"])) {
+                break;
+            }
+
+            $exit_s = (string) getProductController($sql_tool, $user_controller)->update($_POST["id"], $_POST["data"]);
+            break;
+        case "backend/delete-product":
+            if (!isset($_POST["id"])) {
+                break;
+            }
+
+            $exit_s = (string) getProductController($sql_tool, $user_controller)->delete($_POST["id"]);
+            break;
     }
 } elseif (preg_match("/^client/", $URL)) {
     $user_controller = getUserController($sql_tool, "user-id");
