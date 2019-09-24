@@ -1,7 +1,28 @@
-$(".navbar-brand").click(function () {
-    event.preventDefault();
-    window.location.replace("http://localhost/xn/client");
-});
+jqReplaceClick(
+    $(".navbar-brand"),
+    function (e) {
+        e.preventDefault();
+        window.location.replace("http://localhost/xn/client");
+    }
+);
+
+function refreshCart()
+{
+    let cart = getCart();
+    $(".badge").text(Object.keys(cart).length);
+}
+
+function getCart()
+{
+    let cart = $.cookie("cart");
+    if (cart) {
+        cart = JSON.parse(cart);
+    }
+    else {
+        cart = {};
+    }
+    return cart;
+}
 
 function registerModal() {
     $(".modal-title").text("會員註冊");
@@ -160,12 +181,24 @@ jqReplaceClick($("#register-a"), registerModal);
 jqReplaceClick($("#user-login-a"), loginModal);
 jqReplaceClick($("#user-logout-a"), logout);
 
-jqReplaceClick($(".product-img-a"), productUnitOnClick);
+jqReplaceClick($("#m-cart"), myCartBtnOnClick);
 
-function productUnitOnClick() {
-    alert("TT");
+function myCartBtnOnClick(e)
+{
+    e.preventDefault();
 
-    // jqGet(
+    // let cart = JSON.parse($.cookie("cart"));
+    // $.each(cart, function(index, value) {
+    //     console.log(index + " " + value);
+    // });
 
-    // );
+    jqGet(
+        "http://localhost/xn/client/product-cart",
+        {},
+        function (data) {
+            alert(data);
+        }
+    );
 }
+
+refreshCart();

@@ -115,7 +115,7 @@ if (preg_match("/^backend/", $URL)) {
     switch ($URL) {
         case "client":
             require_once("model/Product.php");
-            getSmartyController($sql_tool, $user_controller, $smarty)->menuPage();
+            getSmartyController($sql_tool, $user_controller, $smarty)->product();
             exit();
         case "client/register":
             if (!isset($_POST["name"]) || !isset($_POST["account"]) || !isset($_POST["password"])) {
@@ -134,6 +134,16 @@ if (preg_match("/^backend/", $URL)) {
         case "client/logout":
             $exit_s = (string) $user_controller->logout();
             break;
+        case "client/product-info":
+            if (!isset($_GET["id"])) {
+                break;
+            }
+
+            require_once("model/Product.php");
+            getSmartyController($sql_tool, $user_controller, $smarty)->productInfo($_GET["id"]);
+            exit();
+        case "client/product-cart":
+            exit(getSmartyController($sql_tool, $user_controller, $smarty)->productCart());
     }
 }
 

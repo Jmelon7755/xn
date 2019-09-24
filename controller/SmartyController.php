@@ -10,10 +10,12 @@ class SmartyController extends Controller
         $this->smarty = $smarty;
     }
 
-    public function menuPage()
+    public function product()
     {
+        $DEFAULT_DATETIME = DEFAULT_DATETIME;
+
         $sql_tool = $this->sql_tool;
-        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `product`.`count` > 0;");
+        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `count` > 0 && `delete_time` = '$DEFAULT_DATETIME';");
         $products = $sql_tool->fetchObjectAll("Product");
 
         $this->smarty->assign(
@@ -21,7 +23,7 @@ class SmartyController extends Controller
             $this->user_controller->loginCheck() ? $this->user_controller->user->name : ""
         );
         $this->smarty->assign("products", $products);
-        $this->smarty->display("client.html");
+        $this->smarty->display("product.html");
     }
 
     public function memberManager()
@@ -63,5 +65,31 @@ class SmartyController extends Controller
             return false;
         }
         return true;
+    }
+
+    public function productInfo($id)
+    {
+        $DEFAULT_DATETIME = DEFAULT_DATETIME;
+
+        $sql_tool = $this->sql_tool;
+        $sql_tool->sqlQueryPre(
+            "SELECT * FROM `product` WHERE `id`=? && `delete_time`='$DEFAULT_DATETIME';",
+            ["i", &$id]
+        );
+
+        $product = $sql_tool->result->fetch_object("Product");
+
+        $count_max = min(20, $product->count);
+
+        $smarty = $this->smarty;
+        $smarty->assign("product", $product);
+        $smarty->assign("count_max", $count_max);
+        $smarty->display("product-info.html");
+    }
+
+    public function productCart()
+    {
+        $cart = $_COOKIE["cart"];
+        return $cart;
     }
 }

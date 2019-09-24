@@ -107,7 +107,7 @@ class ProductController extends Controller
 
         //刪除資料庫
         $sql_tool->sqlQueryPre(
-            "DELETE FROM `product` WHERE `id`=?;",
+            "UPDATE `product` SET `delete_time`=NOW() WHERE `id`=?;",
             ["i", &$id]
         );
 

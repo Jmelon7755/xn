@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <img src="{{$cart->img}}" class="img-responsive" width="250" height="250" style="float:left">
+                <h3 class="text-danger">{{$cart->name}}</h3>
+                <p class="text-danger">售價: {{$cart->price}}</p>
+                數量:
+                {{$cart->count}}
+                箱
+                <button id="delete_btn" type="button" class="btn btn-default" value="{{$cart->id}}">刪除</button>
+            </div>
+        </div>
+    </div>
+</div>

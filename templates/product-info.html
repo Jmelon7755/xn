@@ -1,31 +1,26 @@
-{{extends file="master.html"}}
-
-{{block name="stylesheet"}}
-
-{{/block}}
-
-{{block name="title"}}
-Product Info
-{{/block}}
-
-{{block name="body"}}
-<div class="container">
-    <row>
-        <div class="col-xs-5">
-            <img src="
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <img src="
             {{if $product->img}}
             {{$product->img}}
             {{else}}
             http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg
             {{/if}}
-            " class="img-responsive">
-        </div>
-        <div class="col-xs-7">
-            <h3 class="text-danger">{{$product->name}}</h3>
-            <p class="text-danger">售價: {{$product->price}}</p>
-        </div>
-    </row>
+            " class="img-responsive" width="250" height="250" style="float:left">
+        <h3 class="text-danger">{{$product->name}}</h3>
+        <p class="text-danger">售價: {{$product->price}}</p>
+        數量:
+        <select id="buy_count" required="required">
+            {{for $i=1 to $count_max}}
+            <option value="{{$i}}">{{$i}}</option>
+            {{/for}}
+        </select>
+        箱
+
+        <button id="buy_btn" type="button" class="btn btn-default" value="{{$product->id}}">放入菜籃</button>
+        <p class="text-warning">每人限購20箱</p>
+        <p class="text-danger">目前庫存: {{$product->count}}箱</p>
+        <p id="comment">{{$product->comment}}</p>
+    </div>
 </div>
-{{block name="script" prepend}}
-{{/block}}
-{{/block}}

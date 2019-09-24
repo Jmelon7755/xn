@@ -39,23 +39,21 @@ class SQLTool
 
 	public function fetchObjectAll(string $class_name, bool $reverse = false)
 	{
-		$posts = [];
+		$datas = [];
 
 		if (!$this->result) {
 			return [];
 		}
 
 		while ($object = $this->result->fetch_object($class_name)) {
-			$reflect = new \ReflectionClass($object);
-			$props = $reflect->getProperties();
 			if ($reverse) {
-				array_unshift($posts, $object);
+				array_unshift($datas, $object);
 			} else {
-				array_push($posts, $object);
+				array_push($datas, $object);
 			}
 		}
 
-		return $posts;
+		return $datas;
 	}
 
 	public function close()

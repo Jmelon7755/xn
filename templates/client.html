@@ -1,7 +1,7 @@
 {{extends file="master.html"}}
 
 {{block name="stylesheet"}}
-<link rel="stylesheet" href="http://localhost/xn/css/index.css">
+<link rel="stylesheet" href="http://localhost/xn/css/client.css">
 {{/block}}
 
 {{block name="title"}}
@@ -9,6 +9,7 @@ XN
 {{/block}}
 
 {{block name="body"}}
+
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -25,8 +26,8 @@ XN
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav navbar-right">
+                <li><a id="m-cart" href="">我的菜籃<span class="badge"></span></a></li>
                 {{if $user_name}}
-                <li><a href="">我的菜籃</a></li>
                 <li><a href="">我的訂單</a></li>
                 {{/if}}
                 <li class="dropdown">
@@ -52,16 +53,13 @@ XN
     </div>
 </nav>
 
-<div class="container">
-    <div class="row">
-        {{foreach $products as $product}}
-        {{include "product-unit.html" product=$product}}
-        {{/foreach}}
-    </div>
+<div id="index-main" class="container">
+    {{block name="client-main"}}
+    {{/block}}
 </div>
 
-{{block name="script" prepend}}
-<script src="http://localhost/xn/js/client.js" defer></script>
 {{/block}}
 
+{{block name="script" append}}
+<script src="http://localhost/xn/js/client.js" defer></script>
 {{/block}}

@@ -1,0 +1,13 @@
+{{extends file="client.html"}}
+
+{{block name="client-main"}}
+    <div class="row">
+        {{foreach $products as $product}}
+        {{include "product-unit.html" product=$product}}
+        {{/foreach}}
+    </div>
+{{/block}}
+
+{{block name="script" append}}
+<script src="http://localhost/xn/js/product.js" defer></script>
+{{/block}}
