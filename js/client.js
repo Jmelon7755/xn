@@ -6,15 +6,13 @@ jqReplaceClick(
     }
 );
 
-function refreshCart()
-{
+function refreshCart() {
     let cart = getCart();
     $(".badge").text(Object.keys(cart).length);
 }
 
-function getCart()
-{
-    let cart = $.cookie("cart");
+function getCart() {
+    let cart = localStorage.getItem("cart");
     if (cart) {
         cart = JSON.parse(cart);
     }
@@ -183,20 +181,45 @@ jqReplaceClick($("#user-logout-a"), logout);
 
 jqReplaceClick($("#m-cart"), myCartBtnOnClick);
 
-function myCartBtnOnClick(e)
-{
+function myCartBtnOnClick(e) {
     e.preventDefault();
 
-    // let cart = JSON.parse($.cookie("cart"));
-    // $.each(cart, function(index, value) {
-    //     console.log(index + " " + value);
-    // });
+    location.replace("http://localhost/xn/client/product-cart-html");
 
-    jqGet(
+    $.post(
         "http://localhost/xn/client/product-cart",
-        {},
+        { "data": JSON.stringify(getCart()) },
         function (data) {
-            alert(data);
+            if (data.errno === "0") {
+                let unit_html = data.unit_html;
+                let units = JSON.parse(units);
+
+                units.forEach(unit => {
+                    let img = unit.img ? unit.img : "http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg";
+                    $("#cart-units").append(String.format(
+                        unit_html,
+                        unit.id,
+                        img,
+                        unit.name,
+                        unit.price,
+                        unit.count,
+                    ));
+                });
+            } else {
+                switch (data.errno) {
+                    case "1":
+
+                        break;
+                    case "2":
+
+                        break;
+                    case "3":
+
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     );
 }

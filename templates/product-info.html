@@ -9,16 +9,16 @@
             {{/if}}
             " class="img-responsive" width="250" height="250" style="float:left">
         <h3 class="text-danger">{{$product->name}}</h3>
-        <p class="text-danger">售價: {{$product->price}}</p>
+        <p class="text-danger">售價: {{$product->price}}元</p>
         數量:
-        <select id="buy_count" required="required">
+        <select id="product-count" required="required">
             {{for $i=1 to $count_max}}
             <option value="{{$i}}">{{$i}}</option>
             {{/for}}
         </select>
         箱
 
-        <button id="buy_btn" type="button" class="btn btn-default" value="{{$product->id}}">放入菜籃</button>
+        <button id="buy-btn" type="button" class="btn btn-default" value="{{$product->id}}">放入菜籃</button>
         <p class="text-warning">每人限購20箱</p>
         <p class="text-danger">目前庫存: {{$product->count}}箱</p>
         <p id="comment">{{$product->comment}}</p>

@@ -143,7 +143,12 @@ if (preg_match("/^backend/", $URL)) {
             getSmartyController($sql_tool, $user_controller, $smarty)->productInfo($_GET["id"]);
             exit();
         case "client/product-cart":
-            exit(getSmartyController($sql_tool, $user_controller, $smarty)->productCart());
+            if(!isset($_POST["data"])) {
+                exit();
+            }
+
+            getSmartyController($sql_tool, $user_controller, $smarty)->productCart($_POST["data"]);
+            exit();
     }
 }
 

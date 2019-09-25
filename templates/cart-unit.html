@@ -1,14 +1,14 @@
-<div class="panel panel-default">
+<div id="{0}" class="panel panel-default">
     <div class="panel-body">
         <div class="row">
             <div class="col-xs-12">
-                <img src="{{$cart->img}}" class="img-responsive" width="250" height="250" style="float:left">
-                <h3 class="text-danger">{{$cart->name}}</h3>
-                <p class="text-danger">售價: {{$cart->price}}</p>
+                <button type="button" class="btn btn-default pull-right delete-btn" value="{0}">刪除</button>
+                <img src="{1}" class="img-responsive" width="250" height="250" style="float:left">
+                <h3 class="text-danger">{2}</h3>
+                <p class="text-danger">售價: {3}元</p>
                 數量:
-                {{$cart->count}}
+                {4}
                 箱
-                <button id="delete_btn" type="button" class="btn btn-default" value="{{$cart->id}}">刪除</button>
             </div>
         </div>
     </div>

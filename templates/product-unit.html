@@ -2,7 +2,13 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <a id="{{$product->id}}" class="product-img-a" href="">
-                <img src="{{$product->img}}" class="img-responsive" alt="Image" width="250" height="250">
+                <img src="
+                {{if $product->img}}
+                {{$product->img}}
+                {{else}}
+                http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg
+                {{/if}}
+                " class="img-responsive" width="250" height="250">
             </a>
             <p class="text-success">{{$product->name}}</p>
             <p class="text-danger"><span>{{$product->price}}</span><span>元</span></p>

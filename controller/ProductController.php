@@ -3,6 +3,8 @@ class ProductController extends Controller
 {
     public function create(array $data)
     {
+        $return = new stdClass();
+
         $name = htmlspecialchars($data["name"]);
         $img = htmlspecialchars($data["img"]);
         $comment = htmlspecialchars($data["comment"]);
@@ -10,22 +12,26 @@ class ProductController extends Controller
         $count = $data["count"];
         $price = $data["price"];
 
-        $errno = 0;
+        $return->errno = 0;
 
-        //判斷登入
-        if (!$this->user_controller->adminLoginCheck()) {
-            $errno = 1;
-        }
-
-        //驗證資料合法
-        if (!$this->validate(
+         //驗證資料合法
+         if (!$this->validate(
             $name,
             $count,
             $price,
             $img,
             $comment
         )) {
-            $errno = 2;
+            $return->errno = 2;
+        }
+
+        //判斷登入
+        if (!$this->user_controller->adminLoginCheck()) {
+            $return->errno = 1;
+        }
+
+        if($return->errno){
+            return json_encode($return);
         }
 
         //插入資料庫
@@ -33,13 +39,11 @@ class ProductController extends Controller
             "INSERT INTO `product`(`img`, `name`, `count`, `price`, `comment`) VALUES (?,?,?,?,?);",
             ["ssiis", &$img, &$name, &$count, &$price, &$comment]
         );
+        
+        $return->html = file_get_contents("templates/product-manager-row.html");
+        $return->product_id = $this->sql_tool->mysqli->insert_id;
 
-        $data = new stdClass();
-        $data->html = file_get_contents("templates/product-manager-row.html");
-        $data->errno = $errno;
-        $data->product_id = $this->sql_tool->mysqli->insert_id;
-
-        return json_encode($data);
+        return json_encode($return);
     }
 
     public function update(int $id, array $data)
@@ -126,11 +130,11 @@ class ProductController extends Controller
             return false;
         }
 
-        if ($count <= 0 || $count > 9999) {
+        if ($count <= 0 || $count > 9999 || !preg_match("/^\d+$/", $count)) {
             return false;
         }
 
-        if ($price <= 0 || $price > 99999) {
+        if ($price <= 0 || $price > 99999 || !preg_match("/^\d+$/", $price)) {
             return false;
         }
 

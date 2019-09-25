@@ -55,7 +55,7 @@ function addBtnClick() {
 
 function loadTplCallBack() {
     //圖片選取後的事件
-    jqReplaceChange($("#product-img"), e => imgChange(e, "img"));
+    jqReplaceChange($("#product-img"), e => imgChange(e, "#modal-img"));
 
     let $modal_ok_btn = $("#modal-ok-btn");
     //更改OK按鈕的名字
@@ -88,8 +88,13 @@ function createProductCallBack(
     data,
     validatedData
 ) {
+    alert(data);
     data = JSON.parse(data);
+    
     if (data.errno === 0) {
+        if(!validatedData.img){
+            validatedData.img = "http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg";
+        }
         $("tbody").append(String.format(
             data.html,
             data.product_id,

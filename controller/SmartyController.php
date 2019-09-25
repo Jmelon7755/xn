@@ -87,9 +87,43 @@ class SmartyController extends Controller
         $smarty->display("product-info.html");
     }
 
-    public function productCart()
+    public function productCart($cart)
     {
-        $cart = $_COOKIE["cart"];
-        return $cart;
+        $old_cart_json = $cart = json_decode($cart);
+
+        $cart = array_values((array) $cart);
+
+        $sql_tool = $this->sql_tool;
+        $datas = [];
+        foreach ($cart as $item) {
+            $sql_tool->sqlQueryPre(
+                "SELECT `img`, `name`, `price` FROM `product` WHERE `id`=?;",
+                ["i", &$item->id]
+            );
+
+            if (!$sql_tool->result || !($product = $sql_tool->result->fetch_object())) {
+                unset($old_cart_json["id" + $item->id]);
+                continue;
+            }
+
+            $data = new stdClass;
+            $data->id = $item->id;
+            $data->img = $product->img;
+            $data->name = $product->name;
+            $data->price = $product->price;
+            $data->count = $item->count;
+
+            array_push($datas, $data);
+        }
+
+        setcookie("cart", json_encode($old_cart_json));
+
+        $smarty = $this->smarty;
+        $this->smarty->assign(
+            "user_name",
+            $this->user_controller->loginCheck() ? $this->user_controller->user->name : ""
+        );
+        $smarty->assign("carts", $datas);
+        $smarty->display("cart.html");
     }
 }
