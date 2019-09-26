@@ -1,17 +1,8 @@
-{{extends file="client.html"}}
-
-{{block name="title"}}
-Cart
-{{/block}}
-
-{{block name="client-main"}}
-<!-- {{foreach $carts as $cart}}
-{{include "cart-unit.html" cart=$cart}}
-{{/foreach}} -->
-<div id="cart-units"></div>
-<button id="confirm-buy-btn" type="button" class="btn btn-primary pull-right">確認購買</button>
-{{/block}}
-
-{{block name="script" append}}
-<script src="http://localhost/xn/js/cart.js" defer></script>
-{{/block}}
+<h3>我的菜籃</h3>
+<br/>
+{{foreach $cart as $product}}
+{{include "cart-unit.html" product=$product}}
+{{/foreach}}
+{{if count($cart)}}
+<button id="confirm-buy-btn" type="button" class="btn btn-primary pull-right" style="margin-bottom: 5px">確認購買</button>
+{{/if}}

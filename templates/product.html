@@ -1,6 +1,8 @@
 {{extends file="client.html"}}
 
 {{block name="client-main"}}
+    <h3>農場產品</h3>
+    <br/>
     <div class="row">
         {{foreach $products as $product}}
         {{include "product-unit.html" product=$product}}

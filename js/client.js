@@ -162,7 +162,7 @@ function logout(event) {
         "http://localhost/xn/client/logout",
         function (data) {
             if (data === "0") {
-                location.reload();
+                location.replace("http://localhost/xn/client");
             }
             else if (data === "1") {
                 alert("登出失敗");
@@ -184,44 +184,47 @@ jqReplaceClick($("#m-cart"), myCartBtnOnClick);
 function myCartBtnOnClick(e) {
     e.preventDefault();
 
-    location.replace("http://localhost/xn/client/product-cart-html");
+    jqPost(
+        "http://localhost/xn/client/product-cart-check",
+        { "cart": JSON.stringify(getCart()) },
+        productCartCheckCallback
+    );
+}
 
-    $.post(
+function productCartCheckCallback(data) {
+    let cart = getCart();
+
+    if (data) {
+        let not_exist_ids = JSON.parse(data);
+        not_exist_ids.forEach(id => {
+            delete cart["id" + id];
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    jqPost(
         "http://localhost/xn/client/product-cart",
-        { "data": JSON.stringify(getCart()) },
-        function (data) {
-            if (data.errno === "0") {
-                let unit_html = data.unit_html;
-                let units = JSON.parse(units);
+        { "cart": JSON.stringify(cart) },
+        productCartCallback
+    );
+}
 
-                units.forEach(unit => {
-                    let img = unit.img ? unit.img : "http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg";
-                    $("#cart-units").append(String.format(
-                        unit_html,
-                        unit.id,
-                        img,
-                        unit.name,
-                        unit.price,
-                        unit.count,
-                    ));
-                });
-            } else {
-                switch (data.errno) {
-                    case "1":
-
-                        break;
-                    case "2":
-
-                        break;
-                    case "3":
-
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+function productCartCallback(data) {
+    $("title").text("Cart");
+    $("#index-main").html(data);
+    $("#script").append(
+        "<script src=\"http://localhost/xn/js/master.js\" defer></script>" +
+        "<script src=\"http://localhost/xn/js/client.js\" defer></script>" +
+        "<script src=\"http://localhost/xn/js/cart.js\" defer></script>"
     );
 }
 
 refreshCart();
+
+jqReplaceClick($("#m-order"), mOrderOnClick);
+
+function mOrderOnClick(e){
+    e.preventDefault();
+
+    location.replace("http://localhost/xn/client/order");
+}

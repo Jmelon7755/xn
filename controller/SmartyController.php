@@ -18,12 +18,10 @@ class SmartyController extends Controller
         $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `count` > 0 && `delete_time` = '$DEFAULT_DATETIME';");
         $products = $sql_tool->fetchObjectAll("Product");
 
-        $this->smarty->assign(
-            "user_name",
-            $this->user_controller->loginCheck() ? $this->user_controller->user->name : ""
-        );
-        $this->smarty->assign("products", $products);
-        $this->smarty->display("product.html");
+        $smarty = $this->smarty;
+        $this->assignUserName($smarty);
+        $smarty->assign("products", $products);
+        $smarty->display("product.html");
     }
 
     public function memberManager()
@@ -89,9 +87,7 @@ class SmartyController extends Controller
 
     public function productCart($cart)
     {
-        $old_cart_json = $cart = json_decode($cart);
-
-        $cart = array_values((array) $cart);
+        $cart = array_values((array) json_decode($cart));
 
         $sql_tool = $this->sql_tool;
         $datas = [];
@@ -102,7 +98,6 @@ class SmartyController extends Controller
             );
 
             if (!$sql_tool->result || !($product = $sql_tool->result->fetch_object())) {
-                unset($old_cart_json["id" + $item->id]);
                 continue;
             }
 
@@ -116,14 +111,45 @@ class SmartyController extends Controller
             array_push($datas, $data);
         }
 
-        setcookie("cart", json_encode($old_cart_json));
+        $smarty = $this->smarty;
+        $this->assignUserName($smarty);
+        $smarty->assign("cart", $datas);
+        $smarty->display("cart.html");
+    }
+
+    public function order()
+    {
+        $user_controller = $this->user_controller;
+
+        if (!$user_controller->loginCheck()) {
+            return "404";
+        }
+
+        $sql_tool = $this->sql_tool;
+        $sql_tool->sqlQueryPre(
+            "SELECT * FROM `product_order` WHERE `user_id`=?;",
+            ["i", &$user_controller->user->id]
+        );
+        $orders = $sql_tool->fetchObjectAll("Order");
+
+        // $dead_line = new DateTime();
+        // $dead_line->modify("+7 day");
+        // foreach ($orders as $order) {
+        //     $order_time = new DateTime($order->create_time);
+        //     $order->cancel = $order_time < $dead_line;
+        // }
 
         $smarty = $this->smarty;
-        $this->smarty->assign(
+        $this->assignUserName($smarty);
+        $smarty->assign("orders", $orders);
+        $smarty->display("order.html");
+    }
+
+    private function assignUserName($smarty)
+    {
+        $smarty->assign(
             "user_name",
             $this->user_controller->loginCheck() ? $this->user_controller->user->name : ""
         );
-        $smarty->assign("carts", $datas);
-        $smarty->display("cart.html");
     }
 }

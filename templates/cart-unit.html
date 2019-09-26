@@ -1,13 +1,19 @@
-<div id="{0}" class="panel panel-default">
+<div id="{{$product->id}}" class="panel panel-default">
     <div class="panel-body">
         <div class="row">
             <div class="col-xs-12">
-                <button type="button" class="btn btn-default pull-right delete-btn" value="{0}">刪除</button>
-                <img src="{1}" class="img-responsive" width="250" height="250" style="float:left">
-                <h3 class="text-danger">{2}</h3>
-                <p class="text-danger">售價: {3}元</p>
-                數量:
-                {4}
+                <button type="button" class="btn btn-default pull-right delete-btn" value="{{$product->id}}">刪除</button>
+                <img src="
+                {{if $product->img}}
+                {{$product->img}}
+                {{else}}
+                http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg
+                {{/if}}
+                " class="img-responsive" width="250" height="250" style="float:left">
+                <h3 class="text-danger">{{$product->name}}</h3>
+                <p class="text-danger">售價: {{$product->price}}元</p>
+                購買數量:
+                {{$product->count}}
                 箱
             </div>
         </div>

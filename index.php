@@ -2,6 +2,8 @@
 
 define("DEFAULT_DATETIME", "0001-01-01 00:00:00");
 
+date_default_timezone_set('Asia/Taipei');
+
 function getUserController($sql_tool, $sessionKey)
 {
     $user_id = isset($_SESSION["$sessionKey"]) ? $_SESSION["$sessionKey"] : 0;
@@ -18,6 +20,12 @@ function getProductController($sql_tool, $user_controller)
 {
     require_once("controller/ProductController.php");
     return new ProductController($sql_tool, $user_controller);
+}
+
+function getOrderController($sql_tool, $user_controller)
+{
+    require_once("controller/OrderController.php");
+    return new OrderController($sql_tool, $user_controller);
 }
 
 require_once("model/Model.php");
@@ -51,6 +59,7 @@ if (preg_match("/^backend/", $URL)) {
             $smartyController = getSmartyController($sql_tool, $user_controller, $smarty);
             $smartyController->memberManager();
             exit();
+            // no break
         case "backend/product-manager":
             require_once("model/Product.php");
             $smartyController = getSmartyController($sql_tool, $user_controller, $smarty);
@@ -117,6 +126,7 @@ if (preg_match("/^backend/", $URL)) {
             require_once("model/Product.php");
             getSmartyController($sql_tool, $user_controller, $smarty)->product();
             exit();
+            // no break
         case "client/register":
             if (!isset($_POST["name"]) || !isset($_POST["account"]) || !isset($_POST["password"])) {
                 break;
@@ -142,13 +152,39 @@ if (preg_match("/^backend/", $URL)) {
             require_once("model/Product.php");
             getSmartyController($sql_tool, $user_controller, $smarty)->productInfo($_GET["id"]);
             exit();
+            // no break
         case "client/product-cart":
-            if(!isset($_POST["data"])) {
-                exit();
+            if (!isset($_POST["cart"])) {
+                break;
             }
 
-            getSmartyController($sql_tool, $user_controller, $smarty)->productCart($_POST["data"]);
-            exit();
+            exit(getSmartyController($sql_tool, $user_controller, $smarty)->productCart($_POST["cart"]));
+            // no break
+        case "client/product-cart-check":
+            if (!isset($_POST["cart"])) {
+                break;
+            }
+
+            exit(getProductController($sql_tool, $user_controller)->productCheck($_POST["cart"]));
+            // no break
+        case "client/product-purchase":
+            if (!isset($_POST["cart"])) {
+                break;
+            }
+
+            exit((string) getOrderController($sql_tool, $user_controller)->Create($_POST["cart"]));
+            // no break
+        case "client/order":
+            require_once("model/Order.php");
+            exit(getSmartyController($sql_tool, $user_controller, $smarty)->order());
+            // no break
+        case "client/detail":
+            if (!isset($_POST["order_id"])) {
+                break;
+            }
+
+            exit(getProductController($sql_tool, $user_controller)->detail($_POST["order_id"]));
+            // no break
     }
 }
 

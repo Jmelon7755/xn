@@ -21,15 +21,16 @@ class SQLTool
 
 		$stmt = $this->mysqli->prepare($sql);
 		if (!$stmt) {
-			return;
+			return false;
 		}
 
 		call_user_func_array(array($stmt, 'bind_param'), $params);
 		if (!$stmt->execute()) {
-			return;
+			return false;
 		}
 
 		$this->result = $stmt->get_result();
+		return true;
 	}
 
 	public function sqlQuery($sql)

@@ -118,6 +118,25 @@ class ProductController extends Controller
         return 0;
     }
 
+    public function productCheck($cart)
+    {
+        $cart = array_values((array) json_decode($cart));
+
+        $sql_tool = $this->sql_tool;
+        $not_exist_ids = [];
+        $DEFAULT_DATETIME = DEFAULT_DATETIME;
+        foreach ($cart as $item) {
+            $sql_tool->sqlQueryPre(
+                "SELECT `id` FROM `product` WHERE `id`=? && (`count`<=0 || `delete_time`!='$DEFAULT_DATETIME');",
+                ["i", &$item->id]
+            );
+            if ($sql_tool->result && $sql_tool->result->fetch_row()) {
+                array_push($not_exist_ids, $item->id);
+            }
+        }
+        return json_encode($not_exist_ids);
+    }
+
     private function validate(
         $name,
         $count,
