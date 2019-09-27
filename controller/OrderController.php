@@ -5,9 +5,11 @@ class OrderController extends Controller
     {
         $user_controller = $this->user_controller;
 
+        $return_data = $this->return_data;
+
         //判斷登入
         if (!$user_controller->loginCheck()) {
-            return 1;
+            return $return_data->serErrMessage(1, "尚未登入");
         }
 
         $items = [];
@@ -18,7 +20,7 @@ class OrderController extends Controller
             $cart_array = array_values((array) $cart_json);
             foreach ($cart_array as $item) {
                 if (!($obj = $this->checkCount($item))) {
-                    return 2;
+                    return $return_data->serErrMessage(2, "商品資料已更新");
                 }
 
                 $item->name = $obj->name;
@@ -27,7 +29,7 @@ class OrderController extends Controller
                 $items[] = $item;
             }
         } catch (\Throwable $th) {
-            return 3;
+            return $return_data->setErrCode(3);
         }
 
         $sql_tool = $this->sql_tool;
@@ -38,7 +40,7 @@ class OrderController extends Controller
                 "UPDATE `product` SET `count`=`count`-? WHERE `id`=?",
                 ["ii", &$item->count, &$item->id]
             )) {
-                return 4;
+                return $return_data->setErrCode(4);
             }
         }
 
@@ -49,19 +51,21 @@ class OrderController extends Controller
             "INSERT INTO `product_order`(`user_id`, `content`, `create_time`) VALUES (?, ?, NOW());",
             ["is", &$user_controller->user->id, &$items]
         )) {
-            return 4;
+            $return_data->setErrCode(5);
         }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function detail($order_id)
     {
         $user_controller = $this->user_controller;
 
+        $return_data = $this->return_data;
+
         //判斷登入
         if (!$user_controller->loginCheck()) {
-            return "1";
+            return $return_data->setErrCode(1);
         }
 
         //取出明細
@@ -70,15 +74,17 @@ class OrderController extends Controller
             "SELECT `content` FROM `product_order` WHERE `id`=?;",
             ["i", &$order_id]
         )) {
-            return "2";
+            return $return_data->setErrCode(6);
         }
 
         $result = $sql_tool->result;
-        if (!$result || !($row = $result->fetch_row())) {
-            return "3";
+        if (!$result || !($row = $result->fetch_row()) || count($row) <= 0) {
+            return $return_data->setErrCode(6);
         }
 
-        return $row[0];
+        $return_data->data = $row[0];
+
+        return json_encode($return_data);
     }
 
     private function checkCount($item)

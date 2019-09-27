@@ -28,15 +28,15 @@ function registerModal() {
     $modal_body = $(".modal-body");
     $modal_body.load("templates/register.html");
 
-    var ok_btn = $("#modal-ok-btn");
+    let ok_btn = $("#modal-ok-btn");
     ok_btn.text("註冊");
     jqReplaceClick(ok_btn, function () {
-        var Name = $("#name").val();
-        var Account = $("#account").val();
-        var Password = $("#password").val();
-        var PasswordConfirm = $("#password-confirm").val();
+        let Name = $("#name").val();
+        let Account = $("#account").val();
+        let Password = $("#password").val();
+        let PasswordConfirm = $("#password-confirm").val();
 
-        var validation = true;
+        let validation = true;
         if (Name.length <= 0 || Name.length > 15) {
             $("#name-warning").text("字元長度不合法!");
             validation = false;
@@ -66,25 +66,20 @@ function registerModal() {
                     "password": Password
                 },
                 function (data) {
-                    if (data === "0") {
+                    data = JSON.parse(data);
+                    if (data.result) {
                         $modal_body.text("註冊成功，請登入購買");
                         ok_btn.text("確定");
                         jqReplaceClick(ok_btn, function () {
                             $('#modal').modal('hide');
                         });
                     } else {
-                        switch (data) {
-                            case "1":
-                                $("#register-failed").text('欄位輸入不合法');
-                                break;
-                            case "2":
-                                $("#register-failed").text('已存在相同帳號');
-                                break;
-                            case "3":
-                                alert("註冊失敗");
+                        switch (data.err_code) {
+                            case "15":
+                                alert(data.err_message);
                                 break;
                             default:
-                                alert("未知錯誤");
+                                alert("註冊失敗");
                                 break;
                         }
                     }
@@ -101,13 +96,13 @@ function loginModal() {
 
     $(".modal-body").load("templates/user-login.html");
 
-    var ok_btn = $("#modal-ok-btn");
+    let ok_btn = $("#modal-ok-btn");
     ok_btn.text("登入");
     jqReplaceClick(ok_btn, function () {
-        var Account = $("#account").val();
-        var Password = $("#password").val();
+        let Account = $("#account").val();
+        let Password = $("#password").val();
 
-        var validation = true;
+        let validation = true;
 
         if (!Account.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/) && !Account.match(/^09\d{8}$/)) {
             $("#account-warning").text("字元不合法，手機請以「09」開頭");
@@ -127,21 +122,13 @@ function loginModal() {
                     "password": Password
                 },
                 function (data) {
-                    if (data === "0") {
+                    data = JSON.parse(data);
+                    if (data.result) {
                         location.reload();
                     } else {
                         switch (data) {
-                            case "1":
-                                $("#login-failed").text('已登入');
-                                break;
-                            case "2":
-                                $("#login-failed").text('帳號或密碼格式錯誤');
-                                break;
-                            case "3":
-                                $("#login-failed").text('帳號或密碼錯誤');
-                                break;
-                            case "4":
-                                $("#login-failed").text('帳號已被凍結');
+                            case "19":
+                                $("#login-failed").text(data.err_message);
                                 break;
                             default:
                                 alert("未知錯誤");
@@ -161,14 +148,12 @@ function logout(event) {
     $.post(
         "http://localhost/xn/client/logout",
         function (data) {
-            if (data === "0") {
+            data = JSON.parse(data);
+            if (data.result) {
                 location.replace("http://localhost/xn/client");
-            }
-            else if (data === "1") {
+            } else {
                 alert("登出失敗");
             }
-            else
-                alert("未知錯誤");
         }
     ).fail(function () {
         alert("user logout fail");
@@ -192,10 +177,12 @@ function myCartBtnOnClick(e) {
 }
 
 function productCartCheckCallback(data) {
+    data = JSON.parse(data);
+
     let cart = getCart();
 
-    if (data) {
-        let not_exist_ids = JSON.parse(data);
+    if (data.result) {
+        let not_exist_ids = JSON.parse(data.data);
         not_exist_ids.forEach(id => {
             delete cart["id" + id];
         });
@@ -212,7 +199,7 @@ function productCartCheckCallback(data) {
 function productCartCallback(data) {
     $("title").text("Cart");
     $("#index-main").html(data);
-    $("#script").append(
+    $("#script").html(
         "<script src=\"http://localhost/xn/js/master.js\" defer></script>" +
         "<script src=\"http://localhost/xn/js/client.js\" defer></script>" +
         "<script src=\"http://localhost/xn/js/cart.js\" defer></script>"
@@ -223,7 +210,7 @@ refreshCart();
 
 jqReplaceClick($("#m-order"), mOrderOnClick);
 
-function mOrderOnClick(e){
+function mOrderOnClick(e) {
     e.preventDefault();
 
     location.replace("http://localhost/xn/client/order");

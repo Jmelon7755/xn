@@ -12,19 +12,12 @@ jqReplaceClick(
                     "http://localhost/xn/backend/logout",
                     {},
                     function (data) {
-                        if (data === "0") {
+                        data = JSON.parse(data);
+                        if (data.result) {
                             location.reload();
                         }
                         else {
-                            switch (data) {
-                                case "1":
-                                    alert("未登入");
-                                    window.location.replace("http://localhost/xn/backend");
-                                    break;
-                                default:
-                                    alert("未知錯誤");
-                                    break;
-                            }
+                            alert("登出失敗");
                         }
                     }
                 );

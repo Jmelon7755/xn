@@ -24,7 +24,7 @@ function validate() {
 
     let files = $("#product-img").prop("files");
     if (files && files.length > 0) {
-        img = $("img").prop("src");
+        img = $("#modal-img").prop("src");
     }
 
     if (comment.length <= 0 || comment.length > 1000) {
@@ -88,16 +88,15 @@ function createProductCallBack(
     data,
     validatedData
 ) {
-    alert(data);
     data = JSON.parse(data);
-    
-    if (data.errno === 0) {
-        if(!validatedData.img){
+    if (data.result) {
+        let product = JSON.parse(data.data);
+        if (!validatedData.img) {
             validatedData.img = "http://localhost/xn/resource/img/595prodImg20180823033204_1.jpg";
         }
         $("tbody").append(String.format(
-            data.html,
-            data.product_id,
+            product.html,
+            product.product_id,
             validatedData.img,
             validatedData.name,
             validatedData.count,
@@ -108,17 +107,7 @@ function createProductCallBack(
         jqReplaceClick($(".delete-btn"), deleteProduct);
         $('#modal').modal('hide');
     } else {
-        switch (data.errno) {
-            case "1":
-                alert("未登入");
-                break;
-            case "2":
-                alert("表單資料不合法");
-                break;
-            default:
-                alert("未知錯誤: " + data);
-                break;
-        }
+        alert(data.err_message ? data.err_message : "創建產品失敗");
     }
 }
 
@@ -177,7 +166,8 @@ function updateProductPost(id) {
 }
 
 function updateProductCallback(id, data) {
-    if (data === "0") {
+    data = JSON.parse(data);
+    if (data.result) {
         let img = $("#modal-img").attr("src");
         let name = $("#product-name").val();
         let count = $("#product-count").val();
@@ -192,20 +182,7 @@ function updateProductCallback(id, data) {
 
         $("#modal").modal("hide");
     } else {
-        switch (data) {
-            case "1":
-                alert("未登入");
-                break;
-            case "2":
-                alert("無該筆資料");
-                break;
-            case "3":
-                alert("表單資料不合法");
-                break;
-            default:
-                alert("未知錯誤: " + data);
-                break;
-        }
+        alert(data.err_message ? data.err_message : "更新產品資料失敗");
     }
 }
 
@@ -229,21 +206,11 @@ function deleteProductPost(id) {
     $("#modal").modal("hide");
 }
 
-function deleteProductCallback(id, data)
-{
-    if(data === "0") {
+function deleteProductCallback(id, data) {
+    data = JSON.parse(data);
+    if (data.result) {
         $("#" + id).remove();
     } else {
-        switch (data) {
-            case "1":
-                alert("未登入");
-                break;
-            case "2":
-                alert("無該筆資料");
-                break;
-            default:
-                alert("未知錯誤: " + data);
-                break;
-        }
+        alert(data.err_message ? data.err_message : "刪除失敗")
     }
 }

@@ -16,13 +16,14 @@ class UserController
     {
         $this->sql_tool = $sql_tool;
         $this->user = $this->getUser($user_id);
+        $this->return_data = new ReturnData;
     }
 
     public function adminLoginCheck()
     {
         $login = !is_null($this->user) && $this->user->administrator && !$this->user->freeze;
 
-        if(!$login){
+        if (!$login) {
             unset($_SESSION["admin-id"]);
         }
 
@@ -33,7 +34,7 @@ class UserController
     {
         $login = !is_null($this->user) && !$this->user->freeze;
 
-        if(!$login){
+        if (!$login) {
             unset($_SESSION["user-id"]);
         }
 
@@ -42,8 +43,10 @@ class UserController
 
     public function adminLogin($Account, $Password)
     {
+        $return_data = $this->return_data;
+
         if ($this->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(18);
         }
 
         //驗證
@@ -57,7 +60,7 @@ class UserController
         }
         $invalid |= !preg_match("/^\w{6,15}$/", $Password);
         if ($invalid) {
-            return 2;
+            return $return_data->setErrCode(12);
         }
 
         $Password = md5($Password);
@@ -71,57 +74,67 @@ class UserController
 
         $result = $sql_tool->result;
         if (!$result || !($user = $result->fetch_object("User"))) {
-            return 3;
+            return $return_data->setErrCode(13);
         }
 
-        if (!$user->administrator)
-            return 4;
+        if (!$user->administrator) {
+            return $return_data->serErrMessage(14, "非管理員帳號");
+        }
 
         // 將資料存入session
         $_SESSION["admin-id"] = $user->id;
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function logout()
     {
-        if (!$this->loginCheck())
-            return "1";
+        $return_data = $this->return_data;
+
+        if (!$this->loginCheck()) {
+            return $return_data->setErrCode(1);
+        }
 
         unset($_SESSION["user-id"]);
-        return "0";
+        return json_encode($return_data);
     }
 
     public function adminLogout()
     {
-        if (!$this->adminLoginCheck())
-            return "1";
+        $return_data = $this->return_data;
+
+        if (!$this->adminLoginCheck()) {
+            return $return_data->setErrCode(1);
+        }
 
         unset($_SESSION["admin-id"]);
-        return "0";
+        return json_encode($return_data);
     }
 
     public function register($Name, $Account, $Password)
     {
         $Name = htmlspecialchars($Name);
 
+        $return_data = $this->return_data;
+
         //驗證
         if (!(strlen($Name) > 0 && strlen($Name) <= 15)) {
-            return 1;
+            return $return_data->setErrCode(17);
         }
 
         if (preg_match("/^[a-zA-Z0-9.!#$%&’*+\/\=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/", $Account)) {
             //使用信箱註冊
             if (strlen($Account) > 30) {
-                return 1;
+                return $return_data->setErrCode(17);
             }
         } elseif (!preg_match("/^09[0-9]{8}$/", $Account)) {
             //使用手機號碼註冊
-            return 1;
+            return $return_data->setErrCode(17);
         }
 
-        if (!preg_match("/^\w{6,15}$/", $Password))
-            return 1;
+        if (!preg_match("/^\w{6,15}$/", $Password)) {
+            return $return_data->setErrCode(17);
+        }
 
         $Password = md5($Password);
 
@@ -134,7 +147,7 @@ class UserController
         );
         $result = $sql_tool->result;
         if ($result && $result->fetch_row()) {
-            return 2;
+            return $return_data->setErrCode(15, "該帳號已被註冊");
         }
 
         //寫入資料庫
@@ -143,16 +156,19 @@ class UserController
             ['sss', &$Name, &$Account, &$Password]
         );
         if (is_null($sql_tool->result)) {
-            return 3;
+            return $return_data->setErrCode(16);
         }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function login($Account, $Password)
     {
-        if (self::loginCheck())
-            return 1;
+        $return_data = $this->return_data;
+
+        if ($this->loginCheck()) {
+            return $return_data->setErrCode(18);
+        }
 
         //驗證
         $invalid = false;
@@ -165,7 +181,7 @@ class UserController
         }
         $invalid |= !preg_match("/^\w{6,15}$/", $Password);
         if ($invalid) {
-            return 2;
+            return $return_data->setErrCode(12);
         }
 
         $Password = md5($Password);
@@ -179,11 +195,11 @@ class UserController
 
         $result = $sql_tool->result;
         if (!$result || !($this->user = $result->fetch_object("User"))) {
-            return 3;
+            return $return_data->setErrCode(13);
         }
 
         if ($this->user->freeze) {
-            return 4;
+            return $return_data->setErrMessage(19, "該帳號已凍結");
         }
 
         // return gettype($user->id)." ".gettype($user->administrator);
@@ -191,53 +207,61 @@ class UserController
         // 將資料存入session
         $_SESSION["user-id"] = $this->user->id;
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function freezeUsers(array $userIDs, int $freeze)
     {
+        $return_data = $this->return_data;
+
         if (!$this->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(1);
         }
 
         foreach ($userIDs as $userID) {
             if (!$this->setFreezeDBUser($userID, $freeze)) {
-                return 2;
+                return $return_data->setErrCode(20);
             }
         }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function upgradeAdmin(string $userID)
     {
+        $return_data = $this->return_data;
+
         if (!$this->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(1);
         }
 
         if ($this->isFreeze($userID)) {
-            return 2;
+            return $return_data->setErrCode(19);
         }
 
-        $this->sql_tool->sqlQueryPre(
+        if (!$this->sql_tool->sqlQueryPre(
             "UPDATE `user` SET `administrator`=1 WHERE `id`=? ;",
             ['i', &$userID]
-        );
+        )) {
+            return $return_data->setErrCode(21);
+        }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function setFreezeUser(string $userID, int $freeze)
     {
+        $return_data = $this->return_data;
+
         if (!$this->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(1);
         }
 
         if (!$this->setFreezeDBUser($userID, $freeze)) {
-            return 2;
+            return $return_data->setErrCode(20);
         }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     private function setFreezeDBUser(string $userID, int $freeze)

@@ -3,8 +3,6 @@ class ProductController extends Controller
 {
     public function create(array $data)
     {
-        $return = new stdClass();
-
         $name = htmlspecialchars($data["name"]);
         $img = htmlspecialchars($data["img"]);
         $comment = htmlspecialchars($data["comment"]);
@@ -12,38 +10,38 @@ class ProductController extends Controller
         $count = $data["count"];
         $price = $data["price"];
 
-        $return->errno = 0;
+        $return_data = $this->return_data;
 
-         //驗證資料合法
-         if (!$this->validate(
+        //驗證資料合法
+        if (!$this->validate(
             $name,
             $count,
             $price,
             $img,
             $comment
         )) {
-            $return->errno = 2;
+            return $return_data->setErrCode(7);
         }
 
         //判斷登入
         if (!$this->user_controller->adminLoginCheck()) {
-            $return->errno = 1;
-        }
-
-        if($return->errno){
-            return json_encode($return);
+            return $return_data->setErrCode(1);
         }
 
         //插入資料庫
-        $this->sql_tool->sqlQueryPre(
+        if (!$this->sql_tool->sqlQueryPre(
             "INSERT INTO `product`(`img`, `name`, `count`, `price`, `comment`) VALUES (?,?,?,?,?);",
             ["ssiis", &$img, &$name, &$count, &$price, &$comment]
-        );
-        
-        $return->html = file_get_contents("templates/product-manager-row.html");
-        $return->product_id = $this->sql_tool->mysqli->insert_id;
+        )) {
+            return $return_data->setErrCode(8);
+        }
 
-        return json_encode($return);
+        $return_data->data = new stdClass;
+        $return_data->data->html = file_get_contents("templates/product-manager-row.html");
+        $return_data->data->product_id = $this->sql_tool->mysqli->insert_id;
+        $return_data->data = json_encode($this->return_data->data);
+
+        return json_encode($return_data);
     }
 
     public function update(int $id, array $data)
@@ -55,9 +53,11 @@ class ProductController extends Controller
         $count = $data["count"];
         $price = $data["price"];
 
+        $return_data = $this->return_data;
+
         //判斷登入
         if (!$this->user_controller->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(1);
         }
 
         //判斷存在
@@ -68,7 +68,7 @@ class ProductController extends Controller
         );
         $result = $sql_tool->result;
         if (!$result || !$result->fetch_row()) {
-            return 2;
+            return $return_data->setErrCode(9);
         }
 
         //驗證資料合法
@@ -79,23 +79,27 @@ class ProductController extends Controller
             $img,
             $comment
         )) {
-            return 3;
+            return $return_data->setErrCode(7);
         }
 
         //更新資料庫
-        $sql_tool->sqlQueryPre(
+        if (!$sql_tool->sqlQueryPre(
             "UPDATE `product` SET `img`=?,`name`=?,`count`=?,`price`=?,`comment`=? WHERE `id`=?;",
             ["ssiisi", &$img, &$name, &$count, &$price, &$comment, &$id]
-        );
+        )) {
+            return $return_data->setErrCode(10);
+        }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function delete(int $id)
     {
+        $return_data = $this->return_data;
+
         //判斷登入
         if (!$this->user_controller->adminLoginCheck()) {
-            return 1;
+            return $return_data->setErrCode(1);
         }
 
         //判斷存在
@@ -106,16 +110,18 @@ class ProductController extends Controller
         );
         $result = $sql_tool->result;
         if (!$result || !$result->fetch_row()) {
-            return 2;
+            return $return_data->setErrCode(9);
         }
 
         //刪除資料庫
-        $sql_tool->sqlQueryPre(
+        if (!$sql_tool->sqlQueryPre(
             "UPDATE `product` SET `delete_time`=NOW() WHERE `id`=?;",
             ["i", &$id]
-        );
+        )) {
+            return $return_data->setErrCode(11);
+        }
 
-        return 0;
+        return json_encode($return_data);
     }
 
     public function productCheck($cart)
@@ -134,7 +140,11 @@ class ProductController extends Controller
                 array_push($not_exist_ids, $item->id);
             }
         }
-        return json_encode($not_exist_ids);
+
+        $return_data = $this->return_data;
+        $return_data->data = json_encode($not_exist_ids);
+
+        return json_encode($return_data);
     }
 
     private function validate(
@@ -157,7 +167,7 @@ class ProductController extends Controller
             return false;
         }
 
-        if (strlen($img) > 87381) {
+        if (strlen($img) > 2861738) {
             return false;
         }
 

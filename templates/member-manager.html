@@ -7,7 +7,7 @@
 {{block name="tab-panel"}}
 <div class="row">
     <div class="col-xs-12">
-        <button id="all-freeze-btn" type="button" class="btn btn-danger" style="display:none">
+        <button id="all-freeze-btn" type="button" class="btn btn-danger" disabled">
             <span class="glyphicon glyphicon-trash"></span> 批量凍結
         </button>
     </div>
@@ -53,9 +53,9 @@
                     </td>
                     <td>
                         {{if $user->freeze}}
-                        已凍結
+                        <p class="text-danger">已凍結</p>
                         {{else}}
-                        已開啟
+                        <p class="text-primary">已開啟</p>
                         {{/if}}
                     </td>
                     <td>

@@ -35,25 +35,18 @@ function confirmBuy() {
 }
 
 function productPurchaseCallback(data) {
-    if (data === "0") {
+    data = JSON.parse(data);
+    if (data.result) {
         localStorage.removeItem("cart");
         alert("購買成功，請查看訂單");
         location.replace("http://localhost/xn/client");
     } else {
-        switch (data) {
-            case "1":
+        switch (data.err_code) {
+            case 1:
                 loginModal();
                 break;
-            case "2":
-                alert("產品資訊已更改");
-                location.replace("http://localhost/xn/client");
-                break;
-            case "3":
-            case "4":
-                alert("購買失敗: " + data);
-                break;
             default:
-                alert("未知錯誤: " + data);
+                alert("購買失敗");
                 break;
         }
     }

@@ -25,27 +25,16 @@ $("form").submit(function (event) {
                 "password": Password
             },
             function (data) {
-                if (data === "0") {
+                data = JSON.parse(data);
+
+                if (data.result) {
                     window.location.replace("http://localhost/xn/backend");
-                }
-                else {
-                    switch (data) {
-                        case "1":
-                            alert("已登入");
-                            window.location.replace("http://localhost/xn/backend");
-                            break;
-                        case "2":
-                            $("#login-failed").text('帳號或密碼格式錯誤');
-                            break;
-                        case "3":
-                            $("#login-failed").text('帳號或密碼錯誤');
-                            break;
-                        case "4":
-                            $("#login-failed").text('非管理員帳號');
-                            break;
-                        default:
-                            alert("未知錯誤");
-                            break;
+                } else {
+                    if (data.err_code === 14) {
+                        $("#login-failed").text(data.err_message);
+                    }
+                    else {
+                        alert("登入失敗");
                     }
                 }
             }

@@ -30,6 +30,7 @@ function getOrderController($sql_tool, $user_controller)
 
 require_once("model/Model.php");
 require_once("model/User.php");
+require_once("ReturnData.php");
 require_once("controller/Controller.php");
 require_once("controller/UserController.php");
 require_once('../libs/smarty-3.1.33/libs/Smarty.class.php');
@@ -70,31 +71,31 @@ if (preg_match("/^backend/", $URL)) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->adminLogin($_POST["account"], $_POST["password"]);
+            $exit_s = $user_controller->adminLogin($_POST["account"], $_POST["password"]);
             break;
         case "backend/logout":
-            $exit_s = (string) $user_controller->adminLogout();
+            $exit_s = $user_controller->adminLogout();
             break;
         case "backend/freeze-users":
             if (!isset($_POST["user-ids"])) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->freezeUsers($_POST["user-ids"], 1);
+            $exit_s = $user_controller->freezeUsers($_POST["user-ids"], 1);
             break;
         case "backend/upgrade-admin":
             if (!isset($_POST["user-id"])) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->upgradeAdmin($_POST["user-id"]);
+            $exit_s = $user_controller->upgradeAdmin($_POST["user-id"]);
             break;
         case "backend/set-freeze-user":
             if (!isset($_POST["user-id"]) || !isset($_POST["freeze"])) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->setFreezeUser($_POST["user-id"], $_POST["freeze"]);
+            $exit_s = $user_controller->setFreezeUser($_POST["user-id"], $_POST["freeze"]);
             break;
         case "backend/create-product":
             if (!isset($_POST["data"])) {
@@ -108,14 +109,14 @@ if (preg_match("/^backend/", $URL)) {
                 break;
             }
 
-            $exit_s = (string) getProductController($sql_tool, $user_controller)->update($_POST["id"], $_POST["data"]);
+            $exit_s = getProductController($sql_tool, $user_controller)->update($_POST["id"], $_POST["data"]);
             break;
         case "backend/delete-product":
             if (!isset($_POST["id"])) {
                 break;
             }
 
-            $exit_s = (string) getProductController($sql_tool, $user_controller)->delete($_POST["id"]);
+            $exit_s = getProductController($sql_tool, $user_controller)->delete($_POST["id"]);
             break;
     }
 } elseif (preg_match("/^client/", $URL)) {
@@ -132,17 +133,17 @@ if (preg_match("/^backend/", $URL)) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->register($_POST["name"], $_POST["account"], $_POST["password"]);
+            $exit_s = $user_controller->register($_POST["name"], $_POST["account"], $_POST["password"]);
             break;
         case "client/login":
             if (!isset($_POST["account"]) || !isset($_POST["password"])) {
                 break;
             }
 
-            $exit_s = (string) $user_controller->login($_POST["account"], $_POST["password"]);
+            $exit_s = $user_controller->login($_POST["account"], $_POST["password"]);
             break;
         case "client/logout":
-            $exit_s = (string) $user_controller->logout();
+            $exit_s = $user_controller->logout();
             break;
         case "client/product-info":
             if (!isset($_GET["id"])) {
@@ -172,18 +173,18 @@ if (preg_match("/^backend/", $URL)) {
                 break;
             }
 
-            exit((string) getOrderController($sql_tool, $user_controller)->Create($_POST["cart"]));
+            exit(getOrderController($sql_tool, $user_controller)->Create($_POST["cart"]));
             // no break
         case "client/order":
             require_once("model/Order.php");
             exit(getSmartyController($sql_tool, $user_controller, $smarty)->order());
             // no break
-        case "client/detail":
-            if (!isset($_POST["order_id"])) {
+        case "client/order-detail":
+            if (!isset($_GET["order-id"])) {
                 break;
             }
 
-            exit(getProductController($sql_tool, $user_controller)->detail($_POST["order_id"]));
+            exit(getOrderController($sql_tool, $user_controller)->detail($_GET["order-id"]));
             // no break
     }
 }

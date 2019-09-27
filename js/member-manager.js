@@ -7,10 +7,10 @@ function checkFreezeBtnShow() {
         }
     });
     if ($show) {
-        $("#all-freeze-btn").show();
+        $("#all-freeze-btn").attr("disabled", false);
     }
     else {
-        $("#all-freeze-btn").hide();
+        $("#all-freeze-btn").attr("disabled", true);
     }
 }
 
@@ -33,22 +33,11 @@ function freezeFuncCallback(event, user_id, confirmText, freeze, failMessage) {
                     "freeze": freeze
                 },
                 function (data) {
-                    if (data === "0") {
+                    data = JSON.parse(data);
+                    if (data.result) {
                         location.reload();
-                    }
-                    else {
-                        switch (data) {
-                            case "1":
-                                alert("未登入");
-                                window.location.replace("http://localhost/xn/backend");
-                                break;
-                            case "2":
-                                alert(failMessage);
-                                break;
-                            default:
-                                alert("未知錯誤");
-                                break;
-                        }
+                    } else {
+                        alert(failMessage);
                     }
                 }
             );
@@ -90,22 +79,11 @@ jqReplaceClick(
                         "user-ids": userIDs
                     },
                     function (data) {
-                        if (data === "0") {
+                        data = JSON.parse(data);
+                        if (data.result) {
                             location.reload();
-                        }
-                        else {
-                            switch (data) {
-                                case "1":
-                                    alert("未登入");
-                                    window.location.replace("http://localhost/xn/backend");
-                                    break;
-                                case "2":
-                                    alert("凍結失敗");
-                                    break;
-                                default:
-                                    alert("未知錯誤");
-                                    break;
-                            }
+                        } else {
+                            alert("凍結失敗");
                         }
                     }
                 );
@@ -162,22 +140,11 @@ jqReplaceClick(
                         "user-id": userID
                     },
                     function (data) {
-                        if (data === "0") {
+                        data = JSON.parse(data);
+                        if (data.result) {
                             location.reload();
-                        }
-                        else {
-                            switch (data) {
-                                case "1":
-                                    alert("未登入");
-                                    window.location.replace("http://localhost/xn/backend");
-                                    break;
-                                case "2":
-                                    alert("該帳號已被凍結");
-                                    break;
-                                default:
-                                    alert("未知錯誤");
-                                    break;
-                            }
+                        } else {
+                            alert("升級失敗");
                         }
                     }
                 );
