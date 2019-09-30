@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * 123
+ */
 class SmartyController extends Controller
 {
     private $smarty;
 
+    /**
+     * 123
+     */
     public function __construct(SQLTool $sqltool, UserController $user_controller, Smarty $smarty)
     {
         parent::__construct($sqltool, $user_controller);
@@ -12,11 +18,10 @@ class SmartyController extends Controller
 
     public function product()
     {
-        $DEFAULT_DATETIME = DEFAULT_DATETIME;
-
+        ## 123
         $sql_tool = $this->sql_tool;
-        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `count` > 0 && `delete_time` = '$DEFAULT_DATETIME';");
-        $products = $sql_tool->fetchObjectAll("Product");
+        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `count` > 0 && `delete_time` = '" . DEFAULT_DATETIME . "';");
+        $products = $sql_tool->fetchObjectAll("Product"); 
 
         $smarty = $this->smarty;
         $this->assignUserName($smarty);
@@ -47,8 +52,7 @@ class SmartyController extends Controller
 
         $sql_tool = $this->sql_tool;
 
-        $DEFAULT_DATETIME = DEFAULT_DATETIME;
-        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `delete_time` = '$DEFAULT_DATETIME';");
+        $sql_tool->sqlQuery("SELECT * FROM `product` WHERE `delete_time` = '" . DEFAULT_DATETIME . "';");
         $products = $sql_tool->fetchObjectAll("Product");
 
         $this->smarty->assign("user_name", $this->user_controller->user->name);
@@ -67,11 +71,9 @@ class SmartyController extends Controller
 
     public function productInfo($id)
     {
-        $DEFAULT_DATETIME = DEFAULT_DATETIME;
-
         $sql_tool = $this->sql_tool;
         $sql_tool->sqlQueryPre(
-            "SELECT * FROM `product` WHERE `id`=? && `delete_time`='$DEFAULT_DATETIME';",
+            "SELECT * FROM `product` WHERE `id`=? && `delete_time`='" . DEFAULT_DATETIME . "';",
             ["i", &$id]
         );
 

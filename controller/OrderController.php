@@ -93,11 +93,9 @@ class OrderController extends Controller
             return null;
         }
 
-        $DEFAULT_DATETIME = DEFAULT_DATETIME;
-
         $sql_tool = $this->sql_tool;
         $sql_tool->sqlQueryPre(
-            "SELECT `name`, `price` FROM `product` WHERE `id`=? && `count`>=? && `delete_time`='$DEFAULT_DATETIME';",
+            "SELECT `name`, `price` FROM `product` WHERE `id`=? && `count`>=? && `delete_time`='" . DEFAULT_DATETIME . "';",
             ["ii", &$item->id, &$item->count]
         );
 

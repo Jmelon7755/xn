@@ -130,10 +130,9 @@ class ProductController extends Controller
 
         $sql_tool = $this->sql_tool;
         $not_exist_ids = [];
-        $DEFAULT_DATETIME = DEFAULT_DATETIME;
         foreach ($cart as $item) {
             $sql_tool->sqlQueryPre(
-                "SELECT `id` FROM `product` WHERE `id`=? && (`count`<=0 || `delete_time`!='$DEFAULT_DATETIME');",
+                "SELECT `id` FROM `product` WHERE `id`=? && (`count`<=0 || `delete_time`!='" . DEFAULT_DATETIME . "');",
                 ["i", &$item->id]
             );
             if ($sql_tool->result && $sql_tool->result->fetch_row()) {
